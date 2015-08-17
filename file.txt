@@ -1,0 +1,119 @@
+﻿<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+use App\NguoidungModel;
+use Illuminate\Support\Facades\Log;
+use Mockery\Exception;
+
+class NguoidungController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index()
+    {
+        $users= NguoidungModel::all();
+        return view('nguoidung.index')->with('data',$users);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
+        return view('nguoidung.create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  Request  $request
+     * @return Response
+     */
+    public function store(Request $request)
+    {
+        $user=new NguoidungModel();
+        $user->username=$request->txtusername;
+        $user->password=$request->txtpassword;
+        $user->save();
+        $users= NguoidungModel::all();
+        return view('nguoidung.index')->with('data',$users);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id)
+    {
+
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function edit($id)
+    {
+        $user=NguoidungModel::findOrFail($id);
+        return view('nguoidung.edit')->with('user',$user);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  Request  $request
+     * @param  int  $id
+     * @return Response
+     */
+    public function update(Request $request, $id)
+    {
+       return $id;
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function destroy($id)
+    {
+        NguoidungModel::destroy($id);
+        $users= NguoidungModel::all();
+        return view('nguoidung.index')->with('data',$users);
+    }
+    public  function  savefile(){
+        move_uploaded_file($_FILES['file_that_uploaded']['tmp_name'],
+            'D:\Image\\'.time("h-m-s")."_".$_FILES['file_that_uploaded']['name']);
+        return view('upload');
+    }
+}
+
+
+
+
+
+
+
+
+
+View
+ <form method="post" action="{{route('upload')}}" enctype="multipart/form-data">
+        <input type="hidden" value="{!! csrf_token()!!}" name="_token"/>
+        <input type="file" name="file_that_uploaded" /><br/>
+        <input type="submit" value="Upload" />
+ </form>
